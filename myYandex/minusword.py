@@ -4,6 +4,8 @@ Created on 29 сент. 2018 г.
 @author: valera
 '''
 from itertools import groupby
+from  myYandex.minusword import *
+
 
 class MinusWord(object):
     '''
@@ -54,10 +56,6 @@ class MinusWord(object):
                     minusWord[tmpstr]=[]
                     minusWord[tmpstr].append([])# 0 слова
                     minusWord[tmpstr].append([])# 1 минус слова   
-                    tire = Tire()
-                    tire.brand='continental'
-                    minusWord[tmpstr].append(tire)
-                    
                          
                 minusWord[tmpstr][0].append(word.copy())         
                 for tmpMw in t[i:]: # формируем минусовые слова
@@ -66,6 +64,8 @@ class MinusWord(object):
               
                 if tmpstr not in minusWord: # если нету минус слов
                     minusWord[tmpstr][1]=[]   
+                
+            
                           
                 if iw != t[-1] and len(iw) >0 : # для запросов типа Continental 17
                     tmpstr += ' '
@@ -79,6 +79,8 @@ class MinusWord(object):
                     for tmpMw in t[i:]:
                         if len(tmpMw)>0 and tmpMw != t[-1]:#не пустое и не пос. диметр 
                             minusWord[tmpstr][1].append(tmpMw)
+                
+                
                 i+=1
         # уберем дубликаты
         for key in minusWord:
@@ -96,6 +98,16 @@ class MinusWord(object):
         for key in minusWord:
             tmpList = minusWord[key][0].copy()
             minusWord[key][0]=tmpList[0].copy()
+            
+        
+                
+        #заполним размеры
+        for key in minusWord:    
+            tire = Tire()
+            tire.brand='continental'
+            tire.season='1' #1-зима 2-лето
+            tire.get_razmer( minusWord[key][0])
+            minusWord[key].append(tire)
             
         return minusWord   
     
@@ -120,6 +132,37 @@ class MinusWord(object):
             i+=1
                 
         return ret
+    
+    @staticmethod   
+    def create_url(tire ):
+        str_ret = '/podbor/'
+        if tire.width  is None:
+            str_ret += '0/'
+        else:
+            str_ret += str( tire.width) + '/'
+        
+        if tire.height  is None:
+            str_ret += '0/'
+        else:
+            str_ret += str( tire.height) + '/'
+            
+        if tire.diameter  is None:
+            str_ret += '0/'
+        else:
+            str_ret += str( tire.diameter) + '/'
+        
+        if tire.season  is None:
+            str_ret += '0/0/'
+        else:
+            str_ret += str( tire.season) + '/0/'
+            
+        if tire.brand  is None:
+            str_ret += '0'
+        else:
+            str_ret += str( tire.brand)     
+        
+        return str_ret
+        
 
 class Tire(object):
     def __init__(self):
@@ -198,20 +241,29 @@ class Tire(object):
         del self._width
     brand = property(get_brand, set_brand, del_brand, "brand's docstring")
     season = property(get_season, set_season, del_season, "season's docstring")
+    
+    def __str__(self):
+        tmp_str = " " + self.__brand + " " + self._width + " " + self.__height +" " + self.__diameter  
+        return tmp_str
         
-    def get_razmer(self,list):
+    def get_razmer(self,list_w =[]):
         ''' разбирает список list
         если число от 12 до 22 - диаметр
                    от 30 до 90 - профиль
                    больше 100 - ширина
         '''
-        if type(list) is not list:
+        if type(list_w) is not list:
             return False 
         
-        for w in list:
+        for w in list_w:
             if w.isdigit():
                 a = int(w)
-                if a in range(12,22): self.__diameter=a
-                if a in range(30,90): self.__height = a
+                if a in range(12,24): self.__diameter=a
+                if a in range(25,90): self.__height = a
                 if a > 100:self._width=a
-            
+            else:
+                if w[0]=='r':
+                    w=w[1:]
+                    if w.isdigit():
+                        a = int(w)
+                        self.__diameter=a

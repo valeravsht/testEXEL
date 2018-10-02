@@ -52,7 +52,8 @@ tire= [ [ "CONTINENTAL","ContiIceContact", '2' ,  "" ,  '175',    '65',    '14']
   ["CONTINENTAL",    "ContiIceContact", '2', "SUV" , '245' ,   '55' ,   '19'],    
   ["CONTINENTAL",    "ContiIceContact", '2', "SUV",  '265' ,   '60' ,   '18']] 
   
-listWord1 = ['шины зимние -купить -цена','купить шины зимние', 'шины зимние цена','шины -зимние -купить -цена' ]
+listWord1 = ['шины зимние -купить -цена','купить шины зимние', 'шины зимние цена','шины -зимние -купить -цена','резина зимняя -купить -цена',
+             'купить резину зимнею', 'резина зимнея цена' ]
 
 
 '''
@@ -206,7 +207,8 @@ for word1 in listWord1:
         df2.ix[ 'Unnamed: 11'] = 'Акция! Бесплатный шиномонтаж на шины Continental' 
         df2.ix[ 'Unnamed: 12'] = 'Достоверно. Додротно. Доступно.' 
         df2.ix[ 'Unnamed: 13'] = 'Доступные цены. Акция Бесплатный шиномонтаж на шины Contintntal'
-        df2.ix[ 'Unnamed: 17'] = 'http:\\shintorg.pro'  
+        str_url = MinusWord.create_url(minusW[word2][2])
+        df2.ix[ 'Unnamed: 17'] = 'http://shintorg.pro'  + str_url
         df = df.append(df2.copy())
 
 # df2.ix[ 'Unnamed: 8'] = 'fpodspof poipiwerpo -jelej'
